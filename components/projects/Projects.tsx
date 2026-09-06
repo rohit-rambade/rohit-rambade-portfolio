@@ -18,7 +18,7 @@ export const Projects: React.FC = () => {
         <div className="flex items-end justify-between mb-6 sm:mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-              Selected Work
+              Projects
             </h2>
             <div className="w-10 h-1 bg-primary rounded-full mt-2"></div>
           </div>

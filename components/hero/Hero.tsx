@@ -13,8 +13,8 @@ export const Hero: React.FC = () => {
     <section id="home" className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         {/* Main Hero Card */}
-        <div className="relative bg-white rounded-3xl sm:rounded-[36px] border border-surface-border p-5 sm:p-10 md:p-14 shadow-card hover:shadow-card-hover transition-all duration-300">
-          
+        {/* <div className="relative bg-white rounded-3xl sm:rounded-[36px] border border-surface-border p-5 sm:p-10 md:p-14 shadow-card hover:shadow-card-hover transition-all duration-300"> */}
+          <div>
           {/* Top Meta Bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 text-xs sm:text-sm text-text-secondary pb-5 sm:pb-6 border-b border-surface-border/60">
             <div className="flex items-center gap-1.5 font-medium">
@@ -38,7 +38,7 @@ export const Hero: React.FC = () => {
               <div className="w-32 h-32 min-[400px]:w-36 min-[400px]:h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-full border-2 border-surface-border p-1 bg-white shadow-sm flex items-center justify-center relative">
                 <div className="w-full h-full rounded-full overflow-hidden relative bg-slate-100">
                   <Image
-                    src="/images/rohit-photo.jpg"
+                    src="/images/rohit-photo.png"
                     alt={profile.name}
                     fill
                     className="object-cover object-top"
