@@ -1,85 +1,54 @@
-"use client";
-
 import React from "react";
-import { 
-  Lightbulb, 
-  CheckCircle2, 
-  Code2, 
-  BookOpen, 
-  Users2, 
-  Sparkles 
-} from "lucide-react";
+import { Lightbulb, CheckCircle2, Code2, BookOpen, Users2, Sparkles, type LucideIcon } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
 import { AboutIllustration } from "./AboutIllustration";
+
+const traitIcons: Record<string, LucideIcon> = {
+  Lightbulb,
+  CheckCircle2,
+  Code2,
+  BookOpen,
+  Users2,
+  Sparkles,
+};
 
 export const About: React.FC = () => {
   const { traits } = portfolioData;
 
-  const getTraitIcon = (iconName: string) => {
-    switch (iconName) {
-      case "Lightbulb":
-        return <Lightbulb className="w-4 h-4 text-primary" />;
-      case "CheckCircle2":
-        return <CheckCircle2 className="w-4 h-4 text-primary" />;
-      case "Code2":
-        return <Code2 className="w-4 h-4 text-primary" />;
-      case "BookOpen":
-        return <BookOpen className="w-4 h-4 text-primary" />;
-      case "Users2":
-        return <Users2 className="w-4 h-4 text-primary" />;
-      case "Sparkles":
-        return <Sparkles className="w-4 h-4 text-primary" />;
-      default:
-        return <Sparkles className="w-4 h-4 text-primary" />;
-    }
-  };
-
   return (
-    <section id="about" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
-          
-          {/* Left: Line Art Illustration */}
-          <div className="md:col-span-4 flex justify-center">
-            <AboutIllustration />
-          </div>
+    <section id="about" className="section">
+      <div className="section-inner grid grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-14">
+        <div className="md:col-span-4">
+          <AboutIllustration />
+        </div>
 
-          {/* Right: Bio & Traits */}
-          <div className="md:col-span-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-                About Me
-              </h2>
-              <div className="w-10 h-1 bg-primary rounded-full mt-2 mb-4"></div>
-              
-              <p className="text-xs sm:text-sm md:text-base text-text-secondary leading-relaxed">
-                Passionate about creating clean, efficient and scalable solutions with great user experiences. I love working with technologies that push the web forward.
-              </p>
-              
-              <p className="mt-2 text-xs sm:text-sm text-text-muted leading-relaxed">
-                With 2 years of hands-on experience in full-stack engineering across insurance, healthcare, and enterprise lab domains, I specialize in designing robust C# and ASP.NET Core APIs, reactive React architectures, and high-performance SQL databases.
-              </p>
-            </div>
+        <div className="md:col-span-8">
+          <h2 className="section-title">About Me</h2>
+          <div className="section-rule" />
 
-            {/* 6 Feature Trait Items */}
-            <div className="mt-6 sm:mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              {traits.map((trait) => (
-                <div
-                  key={trait.title}
-                  className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center shrink-0">
-                    {getTraitIcon(trait.iconName)}
-                  </div>
-                  <span className="text-xs sm:text-sm font-semibold text-text-main">
-                    {trait.title}
+          <p className="mt-5 text-base sm:text-lg leading-relaxed text-text-main max-w-[60ch]">
+            Passionate about creating clean, efficient and scalable solutions with great user experiences. I
+            love working with technologies that push the web forward.
+          </p>
+          <p className="mt-3 text-[15px] sm:text-base leading-relaxed text-text-secondary max-w-[62ch]">
+            With 2 years of hands-on experience in full-stack engineering across insurance, healthcare, and
+            enterprise lab domains, I specialize in designing robust C# and ASP.NET Core APIs, reactive React
+            architectures, and high-performance SQL databases.
+          </p>
+
+          <ul className="mt-8 grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3">
+            {traits.map((trait) => {
+              const Icon = traitIcons[trait.iconName] ?? Sparkles;
+              return (
+                <li key={trait.title} className="flex items-center gap-3" title={trait.description}>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-light">
+                    <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
                   </span>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
+                  <span className="text-sm font-semibold text-text-main">{trait.title}</span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </section>

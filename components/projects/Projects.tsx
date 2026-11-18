@@ -1,96 +1,93 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
-import { portfolioData, Project } from "@/data/portfolio";
+import React, { useRef, useState } from "react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { portfolioData, type Project } from "@/data/portfolio";
 import { ProjectPreview } from "./ProjectPreviews";
 import { ProjectModal } from "./ProjectModal";
 
 export const Projects: React.FC = () => {
   const { projects } = portfolioData;
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const openProject = (project: Project, trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger;
+    setSelectedProject(project);
+  };
+
+  const closeProject = () => {
+    setSelectedProject(null);
+    // Return focus to the card that opened the dialog
+    requestAnimationFrame(() => triggerRef.current?.focus());
+  };
 
   return (
-    <section id="projects" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Header with Title and 'View All Projects' */}
-        <div className="flex items-end justify-between mb-6 sm:mb-8">
+    <section id="projects" className="section">
+      <div className="section-inner">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-              Projects
-            </h2>
-            <div className="w-10 h-1 bg-primary rounded-full mt-2"></div>
+            <h2 className="section-title">Projects</h2>
+            <div className="section-rule" />
           </div>
 
           <a
             href={portfolioData.profile.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-primary hover:text-primary-hover transition-colors group"
+            className="group inline-flex items-center gap-1 rounded-full py-1 text-sm font-semibold text-primary transition-colors hover:text-primary-hover"
           >
-            <span>View All Projects</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            More on GitHub
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </a>
         </div>
 
-        {/* 3-Column Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+        <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {projects.map((project) => (
-            <div
-              key={project.id}
-              onClick={() => setSelectedProject(project)}
-              className="group bg-white rounded-2xl border border-surface-border p-4 flex flex-col justify-between hover:shadow-card-hover hover:border-primary-soft/60 transition-all duration-300 cursor-pointer"
-            >
-              {/* Top: UI Preview Mockup */}
-              <div className="rounded-xl overflow-hidden mb-4 bg-slate-950">
-                <ProjectPreview type={project.previewType} />
-              </div>
-
-              {/* Middle: Content */}
-              <div className="flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <h3 className="text-sm sm:text-base font-bold text-text-main group-hover:text-primary transition-colors flex items-center gap-1">
-                      <span>{project.title}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
-                    </h3>
-                  </div>
-
-                  <p className="text-xs text-text-secondary leading-relaxed line-clamp-3 mb-4">
-                    {project.shortDescription}
-                  </p>
+            <li key={project.id}>
+              <article className="group relative flex h-full flex-col rounded-2xl border border-surface-border bg-white p-4 transition-[border-color,box-shadow,transform] duration-300 ease-out-expo hover:-translate-y-1 hover:border-primary-soft/60 hover:shadow-card-hover focus-within:border-primary-soft">
+                <div className="mb-5 overflow-hidden rounded-xl bg-slate-950" aria-hidden="true">
+                  <ProjectPreview type={project.previewType} />
                 </div>
 
-                {/* Bottom: Tech Stack Badges */}
-                <div className="flex flex-wrap gap-1.5 pt-3 border-t border-surface-border/60">
+                <p className="text-xs font-semibold text-primary">{project.category}</p>
+                <h3 className="mt-1.5 text-base font-bold leading-snug text-text-main transition-colors group-hover:text-primary">
+                  <button
+                    type="button"
+                    onClick={(e) => openProject(project, e.currentTarget)}
+                    className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-primary"
+                  >
+                    {project.title}
+                    <ArrowUpRight
+                      className="ml-1 inline h-4 w-4 align-[-2px] opacity-50 transition-[opacity,transform] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </h3>
+
+                <p className="mt-2 mb-5 line-clamp-3 text-sm leading-relaxed text-text-secondary">
+                  {project.shortDescription}
+                </p>
+
+                <ul className="mt-auto flex flex-wrap gap-1.5 border-t border-surface-border/70 pt-4" aria-label="Technologies">
                   {project.technologies.slice(0, 3).map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-2 py-0.5 rounded text-[10px] font-medium bg-surface-bg text-text-secondary border border-surface-border/80"
-                    >
+                    <li key={tech} className="chip">
                       {tech}
-                    </span>
+                    </li>
                   ))}
                   {project.technologies.length > 3 && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary-veryLight text-primary">
+                    <li className="chip border-transparent bg-primary-veryLight text-primary">
                       +{project.technologies.length - 3}
-                    </span>
+                    </li>
                   )}
-                </div>
-              </div>
-
-            </div>
+                </ul>
+              </article>
+            </li>
           ))}
-        </div>
-
+        </ul>
       </div>
 
-      {/* Detail Modal */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <ProjectModal project={selectedProject} onClose={closeProject} />
     </section>
   );
 };

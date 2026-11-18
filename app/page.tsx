@@ -11,12 +11,10 @@ import { Footer } from "@/components/footer/Footer";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen flex flex-col bg-surface-bg selection:bg-primary-light selection:text-primary">
-      {/* Navigation Header */}
+    <div className="relative min-h-screen flex flex-col bg-surface-bg">
       <Navbar />
 
-      {/* Main Content Sections */}
-      <main className="flex-1 w-full">
+      <main id="main" className="flex-1 w-full">
         <Hero />
         <About />
         <Experience />
@@ -26,7 +24,6 @@ export default function Home() {
         <Contact />
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

@@ -3,58 +3,146 @@
 @tailwind utilities;
 
 :root {
-  --primary: #5B21F4;
-  --primary-hover: #4C1D95;
-  --primary-light: #EDE9FE;
-  --primary-very-light: #F5F3FF;
-  --bg-main: #FAFAFA;
-  --card: #FFFFFF;
-  --border: #E5E7EB;
+  --primary: #5b21f4;
+  --primary-hover: #4a17d6;
+  --primary-light: #ede9fe;
+  --primary-very-light: #f5f3ff;
+  --primary-soft: #a78bfa;
+  --bg-main: #fafafa;
+  --card: #ffffff;
+  --border: #e5e7eb;
   --text-main: #111111;
-  --text-secondary: #4B5563;
-  --text-muted: #6B7280;
+  --text-secondary: #4b5563;
+  --text-muted: #636b78;
+  --header-offset: 88px;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #FAFAFA;
-  color: #111111;
+  scroll-padding-top: var(--header-offset);
+  background-color: var(--bg-main);
+  color: var(--text-main);
 }
 
 body {
-  background-color: #FAFAFA;
-  color: #111111;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
+  caret-color: var(--primary);
+  accent-color: var(--primary);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
-  background-color: #EDE9FE;
-  color: #5B21F4;
+  background-color: var(--primary-light);
+  color: var(--primary);
 }
 
-/* Custom subtle scrollbar */
+/* Keyboard focus: visible, on-brand, never on mouse click */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+/* Subtle, on-brand scrollbar */
+html {
+  scrollbar-color: #d4d4d8 var(--bg-main);
+  scrollbar-width: thin;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAFAFA;
+  background: var(--bg-main);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E5E7EB;
+  background: #d4d4d8;
   border-radius: 9999px;
+  border: 2px solid var(--bg-main);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A78BFA;
+  background: var(--primary-soft);
 }
 
-/* Utilities */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  /* Shared section scaffolding so every section aligns to one grid */
+  .section {
+    @apply px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-24;
+  }
+
+  .section-inner {
+    @apply max-w-content mx-auto;
+  }
+
+  .section-title {
+    @apply text-[1.75rem] sm:text-4xl font-extrabold text-black tracking-tight leading-tight;
+  }
+
+  .section-rule {
+    @apply w-10 h-1 bg-primary rounded-full mt-3;
+  }
+
+  .section-lede {
+    @apply mt-4 text-[15px] sm:text-base text-text-secondary leading-relaxed max-w-[60ch];
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition-[background-color,box-shadow,transform] duration-200 ease-out-expo hover:bg-primary-hover hover:shadow-glow active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-white px-6 py-3 text-sm font-semibold text-text-main shadow-xs transition-[background-color,border-color,transform] duration-200 ease-out-expo hover:border-primary-soft hover:bg-primary-veryLight active:scale-[0.98];
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-md border border-surface-border bg-surface-bg px-2 py-0.5 text-[11px] font-medium text-text-secondary;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-surface-border bg-white px-4 py-3 text-sm text-text-main placeholder:text-text-muted transition-[border-color,box-shadow] duration-200 hover:border-zinc-300 focus:border-primary focus:shadow-[0_0_0_3px_rgba(91,33,244,0.12)] focus-visible:outline-none;
+  }
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;

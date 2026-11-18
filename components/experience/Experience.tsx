@@ -1,101 +1,64 @@
-"use client";
-
 import React from "react";
-import { Briefcase, Code, GraduationCap, Award } from "lucide-react";
-import { portfolioData } from "@/data/portfolio";
+import { Briefcase, GraduationCap, Award, type LucideIcon } from "lucide-react";
+import { portfolioData, type ExperienceItem } from "@/data/portfolio";
+
+const typeIcon: Record<ExperienceItem["type"], LucideIcon> = {
+  work: Briefcase,
+  education: GraduationCap,
+  milestone: Award,
+};
 
 export const Experience: React.FC = () => {
   const { experiences } = portfolioData;
 
-  const getNodeIcon = (type: string, index: number) => {
-    if (index === 0) return <Briefcase className="w-5 h-5 text-text-main" />;
-    if (index === 1) return <Code className="w-5 h-5 text-text-main" />;
-    return <GraduationCap className="w-5 h-5 text-text-main" />;
-  };
-
   return (
-    <section id="experience" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Section Header */}
-        <div className="mb-10 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
-            Experience
-          </h2>
-          <div className="w-10 h-1 bg-primary rounded-full mt-2"></div>
-        </div>
+    <section id="experience" className="section">
+      <div className="section-inner">
+        <h2 className="section-title">Experience</h2>
+        <div className="section-rule" />
 
-        {/* Desktop Experience: Horizontal Timeline */}
-        <div className="hidden md:block relative">
-          
-          {/* Dashed Connecting Line Behind Nodes */}
-          <div className="absolute top-6 left-[16%] right-[16%] h-0.5 border-t-2 border-dashed border-primary/40 -z-0"></div>
+        <ol className="relative mt-12 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
+          {/* Connector: vertical on mobile, horizontal on desktop */}
+          <span
+            aria-hidden="true"
+            className="absolute left-6 top-6 bottom-6 border-l-2 border-dashed border-primary/30 md:left-[16.66%] md:right-[16.66%] md:bottom-auto md:border-l-0 md:border-t-2"
+          />
 
-          {/* Timeline Nodes */}
-          <div className="grid grid-cols-3 gap-6 relative z-10">
-            {experiences.map((exp, idx) => (
-              <div key={exp.id} className="flex flex-col items-center text-center group">
-                
-                {/* Circular Icon Node */}
-                <div className="w-12 h-12 rounded-full bg-white border-2 border-surface-border group-hover:border-primary flex items-center justify-center shadow-sm group-hover:shadow-glow transition-all duration-300 mb-4">
-                  {getNodeIcon(exp.type, idx)}
+          {experiences.map((exp) => {
+            const Icon = typeIcon[exp.type];
+            return (
+              <li
+                key={exp.id}
+                className="group relative grid grid-cols-[3rem_1fr] gap-x-4 md:flex md:flex-col md:items-center md:text-center"
+              >
+                <span className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-2 border-surface-border bg-white shadow-sm transition-[border-color,box-shadow] duration-300 group-hover:border-primary group-hover:shadow-glow md:mb-5">
+                  <Icon className="h-5 w-5 text-text-main" aria-hidden="true" />
+                </span>
+
+                <div className="pt-1 md:pt-0">
+                  <p className="text-[13px] font-semibold text-primary tabular-nums">{exp.period}</p>
+                  <h3 className="mt-1 text-lg font-bold leading-snug text-text-main">{exp.title}</h3>
+                  <p className="mt-0.5 text-sm font-medium text-text-secondary">
+                    {exp.company}
+                    {exp.location && <span className="text-text-muted"> · {exp.location}</span>}
+                  </p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-text-secondary md:mx-auto md:max-w-[30ch] md:text-sm">
+                    {exp.description}
+                  </p>
+                  {exp.type === "work" && (
+                    <ul className="mt-4 flex flex-wrap gap-1.5 md:justify-center" aria-label="Technologies">
+                      {exp.technologies.map((tech) => (
+                        <li key={tech} className="chip bg-white">
+                          {tech}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-
-                {/* Period Badge */}
-                <span className="text-xs font-semibold text-primary mb-1">
-                  {exp.period}
-                </span>
-
-                {/* Role / Degree Title */}
-                <h3 className="text-sm font-bold text-text-main group-hover:text-primary transition-colors">
-                  {exp.title}
-                </h3>
-
-                {/* Company / Institution */}
-                <span className="text-xs font-semibold text-primary mt-0.5 mb-2">
-                  {exp.company}
-                </span>
-
-                {/* Description */}
-                <p className="text-xs text-text-secondary leading-relaxed max-w-[240px]">
-                  {exp.description}
-                </p>
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Mobile Experience: Vertical Timeline */}
-        <div className="md:hidden relative pl-6 border-l-2 border-dashed border-primary/40 space-y-8">
-          {experiences.map((exp, idx) => (
-            <div key={exp.id} className="relative group">
-              
-              {/* Timeline Pin */}
-              <div className="absolute -left-[35px] top-0 w-8 h-8 rounded-full bg-white border-2 border-surface-border group-hover:border-primary flex items-center justify-center shadow-xs">
-                {getNodeIcon(exp.type, idx)}
-              </div>
-
-              {/* Content Box */}
-              <div className="bg-white rounded-2xl border border-surface-border p-4 shadow-xs">
-                <span className="text-xs font-semibold text-primary">
-                  {exp.period}
-                </span>
-                <h3 className="text-sm font-bold text-text-main mt-0.5">
-                  {exp.title}
-                </h3>
-                <div className="text-xs font-semibold text-primary mb-2">
-                  {exp.company}
-                </div>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  {exp.description}
-                </p>
-              </div>
-
-            </div>
-          ))}
-        </div>
-
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

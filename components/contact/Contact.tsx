@@ -1,221 +1,177 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Github, 
-  Linkedin, 
-  Send, 
-  Check, 
-  Copy, 
-  ArrowUpRight 
-} from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin, Send, Check, Copy } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
 
 export const Contact: React.FC = () => {
   const { profile } = portfolioData;
-  const [copied, setCopied] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const [composed, setComposed] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(profile.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+    setTimeout(() => setCopyState("idle"), 2500);
   };
 
+  // No backend: hand the message to the visitor's email app, pre-filled.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate sending message
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setFormSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
-      setTimeout(() => setFormSubmitted(false), 5000);
-    }, 800);
+    const subject = `Portfolio enquiry from ${formData.name}`;
+    const body = `${formData.message}\n\n— ${formData.name}\n${formData.email}`;
+    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setComposed(true);
   };
 
+  const socials = [
+    { href: profile.githubUrl, label: "GitHub", Icon: Github, external: true },
+    { href: profile.linkedinUrl, label: "LinkedIn", Icon: Linkedin, external: true },
+    { href: `mailto:${profile.email}`, label: "Email", Icon: Mail, external: false },
+  ];
+
   return (
-    <section id="contact" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        {/* Main Contact Card Matching Reference Design */}
-        <div className="bg-white rounded-3xl sm:rounded-[36px] border border-surface-border p-6 sm:p-10 md:p-12 shadow-card">
-          
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-6 items-center">
-            
-            {/* Left Column: Headline */}
+    <section id="contact" className="section">
+      <div className="section-inner">
+        <div className="rounded-[28px] sm:rounded-[36px] border border-surface-border bg-white p-6 sm:p-10 md:p-12 shadow-card">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center md:gap-6">
             <div className="md:col-span-5">
-              <h2 className="text-2xl sm:text-3xl md:text-3xl font-extrabold text-black tracking-tight leading-snug">
-                Let&apos;s build something meaningful{" "}
-                <span className="text-primary">together.</span>
+              <h2 className="text-[1.75rem] sm:text-4xl font-extrabold leading-tight tracking-tight text-black">
+                Let&apos;s build something meaningful <span className="text-primary">together.</span>
               </h2>
-              <div className="w-10 h-1 bg-primary rounded-full mt-3"></div>
+              <div className="section-rule" />
             </div>
 
-            {/* Middle Column: Contact Info List */}
-            <div className="md:col-span-4 space-y-3 text-xs sm:text-sm text-text-secondary border-t md:border-t-0 md:border-l border-surface-border pt-4 md:pt-0 md:pl-6">
-              
-              {/* Email */}
-              <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-text-muted shrink-0" />
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="font-medium hover:text-primary transition-colors truncate"
-                >
+            <ul className="space-y-3.5 border-t border-surface-border pt-6 text-sm text-text-secondary md:col-span-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+              <li className="flex items-center gap-3">
+                <Mail className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+                <a href={`mailto:${profile.email}`} className="truncate font-medium transition-colors hover:text-primary">
                   {profile.email}
                 </a>
-              </div>
-
-              {/* Phone */}
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-text-muted shrink-0" />
-                <a
-                  href={`tel:${profile.phone}`}
-                  className="font-medium hover:text-primary transition-colors"
-                >
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+                <a href={`tel:${profile.phone}`} className="font-medium tabular-nums transition-colors hover:text-primary">
                   {profile.displayPhone}
                 </a>
-              </div>
-
-              {/* Location */}
-              <div className="flex items-center gap-3">
-                <MapPin className="w-4 h-4 text-text-muted shrink-0" />
+              </li>
+              <li className="flex items-center gap-3">
+                <MapPin className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
                 <span className="font-medium">{profile.location}</span>
-              </div>
-            </div>
+              </li>
+            </ul>
 
-            {/* Right Column: Social Buttons */}
-            <div className="md:col-span-3 flex flex-col items-start md:items-end border-t md:border-t-0 md:border-l border-surface-border pt-4 md:pt-0 md:pl-6">
-              <span className="text-xs sm:text-sm font-bold text-text-main mb-3">
-                Let&apos;s Connect
-              </span>
-
+            <div className="flex flex-col items-start border-t border-surface-border pt-6 md:col-span-3 md:items-end md:border-l md:border-t-0 md:pl-6 md:pt-0">
+              <span className="mb-3 text-sm font-bold text-text-main">Let&apos;s Connect</span>
               <div className="flex items-center gap-2">
-                {/* GitHub */}
-                <a
-                  href={profile.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub Profile"
-                  className="w-10 h-10 rounded-full border border-surface-border bg-surface-bg hover:bg-primary-veryLight hover:border-primary-soft text-text-main hover:text-primary flex items-center justify-center transition-all shadow-xs"
-                >
-                  <Github className="w-4 h-4" />
-                </a>
-
-                {/* LinkedIn */}
-                <a
-                  href={profile.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn Profile"
-                  className="w-10 h-10 rounded-full border border-surface-border bg-surface-bg hover:bg-primary-veryLight hover:border-primary-soft text-text-main hover:text-primary flex items-center justify-center transition-all shadow-xs"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-
-                {/* Direct Mail */}
-                <a
-                  href={`mailto:${profile.email}`}
-                  aria-label="Send Direct Email"
-                  className="w-10 h-10 rounded-full border border-surface-border bg-surface-bg hover:bg-primary-veryLight hover:border-primary-soft text-text-main hover:text-primary flex items-center justify-center transition-all shadow-xs"
-                >
-                  <Mail className="w-4 h-4" />
-                </a>
+                {socials.map(({ href, label, Icon, external }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-surface-border bg-surface-bg text-text-main transition-colors hover:border-primary-soft hover:bg-primary-veryLight hover:text-primary"
+                  >
+                    <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                  </a>
+                ))}
               </div>
             </div>
-
           </div>
 
-          {/* Quick Message Form */}
-          <div className="mt-8 pt-8 border-t border-surface-border/80">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          {/* Message form */}
+          <div className="mt-10 border-t border-surface-border/80 pt-8">
+            <div className="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-text-main">
-                  Send a Quick Message
-                </h3>
-                <p className="text-xs text-text-muted">
-                  Have an opportunity, project, or question? Send a message directly.
+                <h3 className="text-base font-bold text-text-main">Send a message</h3>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Have an opportunity, project, or question? Write it here and it opens in your email app, ready to send.
                 </p>
               </div>
 
               <button
+                type="button"
                 onClick={handleCopyEmail}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-surface-bg hover:bg-slate-100 border border-surface-border text-text-secondary transition-colors"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-surface-border bg-surface-bg px-4 py-2 text-[13px] font-semibold text-text-secondary transition-colors hover:bg-zinc-100"
               >
-                {copied ? (
+                {copyState === "copied" ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-emerald-600">Copied to Clipboard!</span>
+                    <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                    <span className="text-emerald-700">Email copied</span>
                   </>
+                ) : copyState === "failed" ? (
+                  <span>Copy failed, select it above</span>
                 ) : (
                   <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Email</span>
+                    <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Copy email</span>
                   </>
                 )}
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  type="text"
-                  required
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-surface-border bg-surface-bg/50 text-xs sm:text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:border-primary focus:bg-white transition-all"
-                />
-                <input
-                  type="email"
-                  required
-                  placeholder="Your Email Address"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-surface-border bg-surface-bg/50 text-xs sm:text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:border-primary focus:bg-white transition-all"
-                />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-1.5 block text-[13px] font-semibold text-text-main">Name</span>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    autoComplete="name"
+                    placeholder="Jane Doe"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="field"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-1.5 block text-[13px] font-semibold text-text-main">Email</span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    placeholder="jane@company.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="field"
+                  />
+                </label>
               </div>
 
-              <textarea
-                required
-                rows={3}
-                placeholder="How can I help you? (e.g., project details, job opportunity, consultation)"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-surface-border bg-surface-bg/50 text-xs sm:text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"
-              ></textarea>
+              <label className="block">
+                <span className="mb-1.5 block text-[13px] font-semibold text-text-main">Message</span>
+                <textarea
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder="Project details, a job opportunity, or a question"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="field resize-y min-h-[112px]"
+                />
+              </label>
 
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-                {formSubmitted ? (
-                  <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
-                    <Check className="w-4 h-4 text-emerald-500" />
-                    <span>Thank you! Your message has been prepared for Rohit.</span>
-                  </div>
-                ) : (
-                  <span className="text-[11px] text-text-muted">
-                    Typically responds within 24 hours.
-                  </span>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-semibold transition-all shadow-sm group"
-                >
-                  <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-                  <Send className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <div className="flex flex-col-reverse items-stretch justify-between gap-3 pt-1 sm:flex-row sm:items-center">
+                <p className="text-[13px] text-text-muted" role="status">
+                  {composed
+                    ? "Your email app should now be open with the message filled in. If not, copy the email address above."
+                    : "Typically responds within 24 hours."}
+                </p>
+                <button type="submit" className="btn-primary group">
+                  <span>Compose email</span>
+                  <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </button>
               </div>
             </form>
           </div>
-
         </div>
-
       </div>
     </section>
   );
